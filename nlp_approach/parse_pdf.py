@@ -4,8 +4,8 @@ import os
 import re
 
 # %% Convert PDF to text using pdftotext
-in_dir = "transcripts"
-out_dir = "transcripts"
+in_dir = "data/transcripts"
+out_dir = "data/transcripts"
 path = os.path.join(os.getcwd(), in_dir)
 out_path = os.path.join(os.getcwd(), out_dir)
 
