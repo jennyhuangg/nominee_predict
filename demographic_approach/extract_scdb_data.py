@@ -31,7 +31,7 @@ features = {
     "justiceName": "category", # for convenience
     # Justice specific outcome data
     "majority": "category",
-    "vote": "category"
+    "vote": "object"
 }
 # Categorical features that we'll need to convert to dummy variables
 to_dummies = [
@@ -47,8 +47,9 @@ df = pd.read_csv("data/scdb.csv",
                  usecols=features.keys())
 
 df = pd.get_dummies(df, columns=to_dummies)
+
 #%% Merge with nominee demographic data
-noms = pd.read_csv("data/justicesdata.csv", encoding="latin")
+noms = pd.read_pickle("data/nominees.pk1")
 
 merged = df.merge(noms, left_on="justice", right_on="spaethid")
 
@@ -59,3 +60,4 @@ merged = merged[(merged.justiceName.isin(justices))]
 
 #%%
 merged.to_pickle("data/cases_justices_merged.pk")
+merged
