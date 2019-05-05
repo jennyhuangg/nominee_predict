@@ -3,6 +3,8 @@ import subprocess
 import os
 import re
 
+
+
 # %% Convert PDF to text using pdftotext
 in_dir = "data/transcripts"
 out_dir = "data/transcripts"
@@ -24,38 +26,64 @@ for file in os.listdir(path):
 # All nominee statements are preceded by their title+capitalized name, and are
 # followed either by the name of the senator/chairperson who replies to them
 # or the string [The prepared statement follows:]
+names = {
+    "AFortas": "fortas",
+    "AJGoldberg": "goldberg",
+    "AMKennedy": "kennedy",
+    "AScalia": "scalia",
+    "BRWhite": "white",
+    "DHSouter": "souter",
+    "EKagan": "kagan",
+    "EWarren": "warren",
+    "HABlackmun": "blackmun",
+    "JGRoberts": "roberts",
+    "JPStevens": "stevens",
+    "LFPowell": "powell",
+    "NMGorsuch": "gorsuch",
+    "RBGinsburg": "ginsburg",
+    "SDOConnor": "o'connor",
+    "SAAlito": "alito",
+    "SGBreyer": "breyer",
+    "SSotomayor": "sotomayor",
+    "TMarshall": "marshall",
+    "WHRehnquist": "rehnquist"
+}
 
-for file in os.listdir(path):
-    if file.endswith(".txt"):
-        print(f"Extracting utterances from {file}")
-        # Capitalize name based on filename. Filenames contain _chief
-        # to denote that this is theirsecond confirmation hearing, for chief justice
-        # but need to remove this in order to match the transcript
-        # Also add apostrophe to oconnor
-        name = file.split(".")[0].replace("_chief", "").replace("oconnor", "o'connor").upper()
+# for file in os.listdir(path):
+#     if file.endswith(".txt"):
 
-        regex = ""
-        # Look behinds in python need to be fixed length, so in order to emulate
-        # "|" in lookbehinds, we just create a union of regexes, one of each possible
-        # lookbehind
-        for i, prefix in enumerate(["Judge", "Ms.", "Mr.", "Mrs.", "Justice"]):
-            if i != 0:
-                regex += "|"
-            regex += f"((?<=({prefix} {name}(\. )))" + \
-                "(.*?)(?=(((Senator|Chairman) ([A-Z]|'){2,}|\[The prepared|The CHAIRMAN|\[The initial questionnaire))))"
+file = "AScalia.pdf"
+# Capitalize name based on filename. Filenames contain _chief
+# to denote that this is theirsecond confirmation hearing, for chief justice
+# but need to remove this in order to match the transcript
+# Also add apostrophe to oconnor
+name = names[file.split(".")[0].replace("_Chief", "")].upper()
+print(f"Extracting utterances from {file} for {name}")
 
-        print(f"Using regex {regex}")
-        transcript = open(os.path.join(path, file))
 
-        utterance_dir = "utterances"
-        # Remove page headers that start with VerDate, as well as page numbers and empty lines
-        text = ""
-        for line in transcript:
-            line = line.replace("\r", "").replace("\n", "")
-            if not line.startswith("VerDate") and not line.isdigit():
-                text += line
+regex = ""
+# Look behinds in python need to be fixed length, so in order to emulate
+# "|" in lookbehinds, we just create a union of regexes, one of each possible
+# lookbehind
+for i, prefix in enumerate(["Judge", "Ms.", "Mr.", "Mrs.", "Justice"]):
+    if i != 0:
+        regex += "|"
+    regex += f"((?<=({prefix} {name}(\. )))" + \
+        "(.*?)(?=(((Senator|Chairman) ([A-Z]|'){2,}|\[The prepared|The CHAIRMAN|\[The initial questionnaire))))"
 
-        utterances = [match.group(0) for match in re.finditer(regex, text)]
+print(f"Using regex {regex}")
+transcript = open(os.path.join(path, file), "r")
+utterance_dir = "utterances"
+# Remove page headers that start with VerDate, as well as page numbers and empty lines
+len_text = len(text)
+text = ""
 
-        with open(os.path.join(path, utterance_dir, file), "w") as utterance_file:
-            utterance_file.write("\n\n".join(utterances))
+for line in transcript.readlines():
+    line = line.replace("\r", "").replace("\n", "")
+    if not line.startswith("VerDate") and not line.isdigit():
+        text += line
+
+utterances = [match.group(0) for match in re.finditer(regex, text)]
+print(f"Got {count} utterances from {len_text} lines")
+with open(os.path.join(path, utterance_dir, file), "w") as utterance_file:
+    utterance_file.write("\n\n".join(utterances))
