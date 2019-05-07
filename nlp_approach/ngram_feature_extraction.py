@@ -5,6 +5,7 @@ import pickle
 import numpy as np
 import pandas as pd
 
+from sklearn.impute import SimpleImputer
 from sklearn.feature_extraction.text import CountVectorizer
 
 
@@ -18,7 +19,7 @@ for f in files:
         new_files.append(os.path.join(in_dir,f))
 
 # vectorize 1-gram counts
-vectorizer = CountVectorizer(input="filename", stop_words="english", max_df=0.9)
+vectorizer = CountVectorizer(input="filename", stop_words="english", max_features=5000)
 X = vectorizer.fit_transform(new_files)
 Xdata = X.toarray()
 pickle.dump(Xdata, open("data/ngrams/1grams.p", "wb"))
@@ -30,13 +31,22 @@ print("Number of ngrams: ", len(Xdata[0]))
 # merge justice case data with n-grams from utterances
 justicenames = [x[:-4] for x in files]
 print(justicenames)
-jc_data = pickle.load(open("../demographic_approach/data/cases_justices_merged.pk1", "rb" ))
+jc_data = pickle.load(open("../demographic_approach/data/cases_justices_merged.pk", "rb" ))
 jc_data.sort_values(by=['justiceName'])
 ngram_df = pd.DataFrame(data=np.array(Xdata).T, columns=justicenames)
 ngram_df = ngram_df.T
 ngram_df["justiceName"] = ngram_df.index
-jc_data.merge(ngram_df, on='justiceName')
+jc_data = jc_data.merge(ngram_df, on='justiceName')
 
-pickle.dump(jc_data, open("data/case_justices_1grams_merged.p", "wb"))
+#pickle.dump(jc_data, open("data/case_justices_1grams_merged.p", "wb"))
+
+X = jc_data.drop(columns = ["justice", "justiceName", "justice_vote"]).values.astype(np.float64)
+Y = jc_data["justice_vote"].values.astype(np.int32)
+imp = SimpleImputer(missing_values=np.nan, strategy='mean')
+imp.fit(X)
+X = imp.transform(X)
+
+np.save("data/case_justices_1grams_merged_X.npy", X)
+np.save("data/case_justices_1grams_merged_Y.npy", Y)
 
 print("Done")
