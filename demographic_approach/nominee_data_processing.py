@@ -98,6 +98,12 @@ for (a,b,c,d) in columns:
 for elt in ["birthcit","childst","childsur","famses","fathpol","famjud","nomrelig","natorig","race","fathoccu","undsch"]:
     cat_cols.append(elt)
 
+# "birthcit" in jd.columns
+# col_expanded = pd.get_dummies(jd["birthcit"], prefix="birthcit")
+# for row in col_expanded:
+#     jd[row] = col_expanded[row]
+# jd.drop("birthcit", axis=1, inplace=True)
+# "birthcit" in jd.columns
 
 #----------------------------------
 
@@ -106,15 +112,23 @@ for elt in ["birthcit","childst","childsur","famses","fathpol","famjud","nomreli
 
 #Apply this for each categorical column given by the above cell ^^
 #input: id of column to be expanded
-def replace_with_dummies(df, cat_column):
-    col_expanded = pd.get_dummies(jd[cat_column], prefix=cat_column)
-    for row in col_expanded:
-        df[row] = col_expanded[row]
-    df.drop(cat_column, axis=1)
 
-for id in cat_cols:
-    replace_with_dummies(jd, id)
+jd_replaced = pd.get_dummies(jd, columns = cat_cols)
+# jd_replaced.columns
 
-"mothname" in jd.columns
 
-jd.to_pickle('./data/nominees.pk1')
+# def replace_with_dummies(df, cat_column):
+#     col_expanded = pd.get_dummies(jd[cat_column], prefix=cat_column)
+#     for row in col_expanded:
+#         df[row] = col_expanded[row]
+#     df.drop(cat_column, axis=1, inplace=True)
+#
+# for id in cat_cols:
+#     replace_with_dummies(jd, id)
+#
+# "mothname" in jd.columns
+
+# print("mothname" in jd_replaced.columns)
+
+
+jd_replaced.to_pickle('./data/nominees.pk1')
