@@ -14,9 +14,13 @@ in_dir = "data/transcripts/utterances"
 files = os.listdir(in_dir)
 files.sort()
 new_files = []
+justicenames = []
 for f in files:
     if f.endswith(".txt"):
         new_files.append(os.path.join(in_dir,f))
+        justicenames.append(f[:-4])
+
+print(justicenames)
 
 # vectorize 1-gram counts
 vectorizer = CountVectorizer(input="filename", stop_words="english", max_features=5000)
@@ -29,8 +33,6 @@ pickle.dump(Xdata, open("data/ngrams/1grams.p", "wb"))
 print("Number of ngrams: ", len(Xdata[0]))
 
 # merge justice case data with n-grams from utterances
-justicenames = [x[:-4] for x in files]
-print(justicenames)
 jc_data = pickle.load(open("../demographic_approach/data/cases_justices_merged.pk", "rb" ))
 jc_data.sort_values(by=['justiceName'])
 ngram_df = pd.DataFrame(data=np.array(Xdata).T, columns=justicenames)
