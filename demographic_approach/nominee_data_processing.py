@@ -115,4 +115,6 @@ def replace_with_dummies(df, cat_column):
 for id in cat_cols:
     replace_with_dummies(jd, id)
 
+"mothname" in jd.columns
+
 jd.to_pickle('./data/nominees.pk1')
