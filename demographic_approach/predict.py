@@ -10,6 +10,14 @@ import qgrid
 #%%
 df = pd.read_pickle("data/cases_justices_merged.pk")
 
+
+#%%
+# For comparison, we see how effective past votes are at predicting currrent voting behavior
+
+
+
+
+#%%
 # df = df.dropna()
 # df.fillna(df.mode().iloc[0])
 X = df.drop(columns = ["justice", "justiceName", "justice_vote"])
