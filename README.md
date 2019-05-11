@@ -6,8 +6,12 @@ The goal of our project is to train a model to predict how Supreme Court nominee
 
 We used three datasets -- information about nominees available at nomination time, their confirmation text hearings, and information about the future cases they hear and vote on.
 
-## Running data generation
-These are the commands we used to generate our data.
+## Dataset cleaning
+
+TODO
+
+## Feature set generation
+This is how we generated our data.
 
 ### Merge Justice and Case data
 
@@ -26,6 +30,10 @@ python nlp_approach/ngram_feature_extraction.py
 ```
 python nlp_approach/ngram_feature_extraction_tfidf.py
 ```
+
+### Word Embeddings
+
+`nlp_approach/generate_mean_embeddings.ipynb`
 
 ## Model Training and Evaluation
 
