@@ -1,3 +1,9 @@
+'''
+Converts files of confirmation text hearings into vectorized counts of 1to5-grams.
+Also applies the tf-idf transform.
+Merges the counts with justice and case data and outputs the X,Y dataset.
+'''
+
 from collections import Counter
 import os
 import string
