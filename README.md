@@ -11,7 +11,7 @@ We used three datasets -- information about nominees available at nomination tim
 TODO
 
 ## Feature set generation
-This is how we generated our data.
+This is how we generated our data. We would have included this in the python notebook but due to memory errors we had to run these through scripts on our local machines.
 
 ### Merge Justice and Case data
 
